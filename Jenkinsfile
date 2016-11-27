@@ -86,9 +86,9 @@ pipeline {
 			}
 		}
 		stage('Package') {
-			when {
-				sh(script:'which debuild', returnStatus: true) == 0
-			}
+			// when {
+			// 	sh(script:'which debuild', returnStatus: true) == 0
+			// }
 			steps {
 				unstash 'source'
 				sh 'cd aseba && debuild -i -us -uc -b'
