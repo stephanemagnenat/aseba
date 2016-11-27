@@ -62,7 +62,9 @@ pipeline {
 				unstash 'dashel'
 				unstash 'enki'
 				unstash 'source'
-				env.dashel_DIR = sh ( script: 'dirname $(find _install -name dashelConfig.cmake | head -1)', returnStdout: true).trim()
+				script {
+					env.dashel_DIR = sh ( script: 'dirname $(find dist -name dashelConfig.cmake | head -1)', returnStdout: true).trim()
+				}
 				CMake([buildType: 'Debug',
 					   sourceDir: '$workDir/aseba',
 					   buildDir: '$workDir/build/aseba',
