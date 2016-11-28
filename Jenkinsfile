@@ -13,6 +13,7 @@ pipeline {
 	parameters {
         stringParam(defaultValue: 'pollsocketstream', description: 'Dashel branch', name: 'branch_dashel')
         stringParam(defaultValue: 'alpha-classcode-jenkins', description: 'Enki branch', name: 'branch_enki')
+		booleanParam(defaultValue: false, description: 'Build packages', name: 'do_packaging')
     }
 	
 	stages {
@@ -89,14 +90,14 @@ pipeline {
 			steps {
 				unstash 'aseba'
 				dir('build/aseba') {
-					sh "ctest -E 'e2e.*|simulate.*|.*http.*'"
+					sh "ctest -E 'e2e.*|simulate.*|.*http.*|valgrind.*'"
 				}
 			}
 		}
 		stage('Package') {
-			// when {
-			// 	sh(script:'which debuild', returnStatus: true) == 0
-			// }
+			when {
+				env.do_packaging && sh(script:'which debuild', returnStatus: true) == 0
+			}
 			steps {
 				unstash 'source'
 				sh 'cd aseba && debuild -i -us -uc -b'
