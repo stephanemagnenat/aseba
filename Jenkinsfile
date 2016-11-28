@@ -11,16 +11,16 @@ pipeline {
 	stages {
 		stage('Prepare') {
 			steps {
-				sh 'mkdir -p build dist'
+				sh 'mkdir -p externals build dist'
 				dir('aseba') {
 					checkout scm
 					sh 'git submodule update --init'
 				}
-				dir('dashel') {
+				dir('externals/dashel') {
 					git branch: 'pollsocketstream', url: 'https://github.com/davidjsherman/dashel.git'
 				}
-				dir('enki') {
-					git branch: '602e3dd8cff678c27a3b0e4bc888637523b68707', url: 'https://github.com/davidjsherman/enki.git'
+				dir('externals/enki') {
+					git branch: 'alpha-classcode-jenkins', url: 'https://github.com/davidjsherman/enki.git'
 				}
 				stash excludes: '.git', name: 'source'
 			}
@@ -29,7 +29,7 @@ pipeline {
 			steps {
 				unstash 'source'
 				CMake([buildType: 'Debug',
-					   sourceDir: '$workDir/dashel',
+					   sourceDir: '$workDir/externals/dashel',
 					   buildDir: '$workDir/build/dashel',
 					   installDir: '$workDir/dist',
 					   getCmakeArgs: [ '-DBUILD_SHARED_LIBS:BOOL=ON' ]
@@ -45,7 +45,7 @@ pipeline {
 			steps {
 				unstash 'source'
 				CMake([buildType: 'Debug',
-					   sourceDir: '$workDir/enki',
+					   sourceDir: '$workDir/externals/enki',
 					   buildDir: '$workDir/build/enki',
 					   installDir: '$workDir/dist',
 					   getCmakeArgs: [ '-DBUILD_SHARED_LIBS:BOOL=ON' ]
