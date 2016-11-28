@@ -7,7 +7,7 @@
 // now we conservatively recompile them.
 
 pipeline {
-	agent label:'' // use any available Jenkins agent
+	agent label:'debian' // use any available Jenkins agent
 	stages {
 		stage('Prepare') {
 			steps {
