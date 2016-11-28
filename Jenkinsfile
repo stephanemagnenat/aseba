@@ -5,6 +5,7 @@
 
 // Ideally we should unarchive previously compiled Dashel and Enki libraries, but for
 // now we conservatively recompile them.
+// (possible example in https://issues.jenkins-ci.org/browse/JENKINS-32780)
 
 pipeline {
 	agent label:'debian' // use any available Jenkins agent
@@ -81,7 +82,7 @@ pipeline {
 		stage('Test') {
 			steps {
 				dir('build/aseba') {
-					sh 'ctest'
+					sh 'ctest -E e2e -E http'
 				}
 			}
 		}
