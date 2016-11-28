@@ -24,10 +24,10 @@ pipeline {
 					sh 'git submodule update --init'
 				}
 				dir('externals/dashel') {
-					git branch: ${env.branch_dashel}, url: 'https://github.com/davidjsherman/dashel.git'
+					git branch: "${env.branch_dashel}", url: 'https://github.com/davidjsherman/dashel.git'
 				}
 				dir('externals/enki') {
-					git branch: ${env.branch_enki}, url: 'https://github.com/davidjsherman/enki.git'
+					git branch: "${env.branch_enki}", url: 'https://github.com/davidjsherman/enki.git'
 				}
 				stash excludes: '.git', name: 'source'
 			}
