@@ -19,6 +19,7 @@ pipeline {
 	stages {
 		stage('Prepare') {
 			steps {
+				echo "${env.do_packaging}"
 				sh 'mkdir -p externals build dist'
 				dir('aseba') {
 					checkout scm
