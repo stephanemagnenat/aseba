@@ -19,7 +19,6 @@ pipeline {
 	stages {
 		stage('Prepare') {
 			steps {
-				echo "${env.do_packaging}"
 				sh 'mkdir -p externals build dist'
 				dir('aseba') {
 					checkout scm
@@ -32,6 +31,9 @@ pipeline {
 					git branch: "${env.branch_enki}", url: 'https://github.com/davidjsherman/enki.git'
 				}
 				stash excludes: '.git', name: 'source'
+				echo "branch_dashel=${env.branch_dashel}"
+				echo "branch_enki=${env.branch_enki}"
+				echo "do_packaging=${env.do_packaging}"
 			}
 		}
 		stage('Dashel') {
@@ -97,7 +99,6 @@ pipeline {
 		}
 		stage('Package') {
 			when {
-				echo "${env.do_packaging}"
 				env.do_packaging == 'true' && sh(script:'which debuild', returnStatus: true) == 0
 			}
 			steps {
