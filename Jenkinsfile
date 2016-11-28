@@ -96,6 +96,7 @@ pipeline {
 		}
 		stage('Package') {
 			when {
+				echo "${env.do_packaging}"
 				env.do_packaging && sh(script:'which debuild', returnStatus: true) == 0
 			}
 			steps {
