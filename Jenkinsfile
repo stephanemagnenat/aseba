@@ -115,7 +115,7 @@ A					},
 							}
 							unstash 'source'
 							CMake([sourceDir: '$workDir/aseba', label: 'debian',
-								   envs: [ "dashel_DIR=${env.dashel_DIR}", "enki_DIR=${env.enki_DIR}" ])
+								   envs: [ "dashel_DIR=${env.dashel_DIR}", "enki_DIR=${env.enki_DIR}" ] ])
 							stash includes: 'dist/**', name: 'dist-debian'
 						}
 					},
@@ -128,7 +128,7 @@ A					},
 							}
 							unstash 'source'
 							CMake([sourceDir: '$workDir/aseba', label: 'macos',
-								   envs: [ "dashel_DIR=${env.dashel_DIR}", "enki_DIR=${env.enki_DIR}" ])
+								   envs: [ "dashel_DIR=${env.dashel_DIR}", "enki_DIR=${env.enki_DIR}" ] ])
 							stash includes: 'dist/**', name: 'dist-macos'
 						}
 					},
@@ -141,7 +141,7 @@ A					},
 							}
 							unstash 'source'
 							CMake([sourceDir: '$workDir/aseba', label: 'windows',
-								   envs: [ "dashel_DIR=${env.dashel_DIR}", "enki_DIR=${env.enki_DIR}" ])
+								   envs: [ "dashel_DIR=${env.dashel_DIR}", "enki_DIR=${env.enki_DIR}" ] ])
 							stash includes: 'dist/**', name: 'dist-windows'
 						}
 					}
