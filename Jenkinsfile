@@ -50,7 +50,7 @@ pipeline {
 								   buildDir: '$workDir/build/dashel/debian'])
 							stash includes: 'dist/**', name: 'dist-debian'
 						}
-A					},
+					},
 					"macos" : {
 						node('macos') {
 							unstash 'source'
