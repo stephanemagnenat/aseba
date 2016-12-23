@@ -63,7 +63,7 @@ pipeline {
 							unstash 'source'
 							CMake([sourceDir: '$workDir/externals/dashel', label: 'windows',
 								   buildDir: '$workDir/build/dashel/windows'])
-							stash includes: 'dist/**', name: 'dist-dashel=windows'
+							stash includes: 'dist/**', name: 'dist-dashel-windows'
 						}
 					}
 				)
