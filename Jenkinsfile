@@ -47,7 +47,7 @@ pipeline {
 							unstash 'source'
 							CMake([sourceDir: '$workDir/externals/dashel', label: 'debian',
 								   buildDir: '$workDir/build/dashel/debian'])
-							stash includes: 'dist/**', name: 'dist-debian'
+							stash includes: 'dist/**', name: 'dist-dashel-debian'
 						}
 					},
 					"macos" : {
@@ -55,7 +55,7 @@ pipeline {
 							unstash 'source'
 							CMake([sourceDir: '$workDir/externals/dashel', label: 'macos',
 								   buildDir: '$workDir/build/dashel/macos'])
-							stash includes: 'dist/**', name: 'dist-macos'
+							stash includes: 'dist/**', name: 'dist-dashel-macos'
 						}
 					},
 					"windows" : {
@@ -63,7 +63,7 @@ pipeline {
 							unstash 'source'
 							CMake([sourceDir: '$workDir/externals/dashel', label: 'windows',
 								   buildDir: '$workDir/build/dashel/windows'])
-							stash includes: 'dist/**', name: 'dist-windows'
+							stash includes: 'dist/**', name: 'dist-dashel=windows'
 						}
 					}
 				)
@@ -74,29 +74,26 @@ pipeline {
 				parallel (
 					"debian" : {
 						node('debian') {
-							unstash 'dist-debian'
 							unstash 'source'
 							CMake([sourceDir: '$workDir/externals/enki', label: 'debian',
 								   buildDir: '$workDir/build/enki/debian'])
-							stash includes: 'dist/**', name: 'dist-debian'
+							stash includes: 'dist/**', name: 'dist-enki-debian'
 						}
 					},
 					"macos" : {
 						node('macos') {
-							unstash 'dist-macos'
 							unstash 'source'
 							CMake([sourceDir: '$workDir/externals/enki', label: 'macos',
 								   buildDir: '$workDir/build/enki/macos'])
-							stash includes: 'dist/**', name: 'dist-macos'
+							stash includes: 'dist/**', name: 'dist-enki-macos'
 						}
 					},
 					"windows" : {
 						node('windows') {
-							unstash 'dist-windows'
 							unstash 'source'
 							CMake([sourceDir: '$workDir/externals/enki', label: 'windows',
 								   buildDir: '$workDir/build/enki/windows'])
-							stash includes: 'dist/**', name: 'dist-windows'
+							stash includes: 'dist/**', name: 'dist-enki-windows'
 						}
 					}
 				)
@@ -107,42 +104,45 @@ pipeline {
 				parallel (
 					"debian" : {
 						node('debian') {
-							unstash 'dist-debian'
+							unstash 'dist-dashel-debian'
+							unstash 'dist-enki-debian'
 							script {
-								env.dashel_DIR = sh ( script: 'dirname $(find dist -name dashelConfig.cmake | head -1)', returnStdout: true).trim()
-								env.enki_DIR = sh ( script: 'dirname $(find dist -name enkiConfig.cmake | head -1)', returnStdout: true).trim()
+								env.debian_dashel_DIR = sh ( script: 'dirname $(find dist -name dashelConfig.cmake | head -1)', returnStdout: true).trim()
+								env.debian_enki_DIR = sh ( script: 'dirname $(find dist -name enkiConfig.cmake | head -1)', returnStdout: true).trim()
 							}
 							unstash 'source'
 							CMake([sourceDir: '$workDir/aseba', label: 'debian',
-								   envs: [ "dashel_DIR=${env.dashel_DIR}", "enki_DIR=${env.enki_DIR}" ] ])
-							stash includes: 'dist/**', name: 'dist-debian'
+								   envs: [ "dashel_DIR=${env.debian_dashel_DIR}", "enki_DIR=${env.debian_enki_DIR}" ] ])
+							stash includes: 'dist/**', name: 'dist-aseba-debian'
 						}
 					},
 					"macos" : {
 						node('macos') {
-							unstash 'dist-macos'
+							unstash 'dist-dashel-macos'
+							unstash 'dist-enki-macos'
 							script {
-								env.dashel_DIR = sh ( script: 'dirname $(find dist -name dashelConfig.cmake | head -1)', returnStdout: true).trim()
-								env.enki_DIR = sh ( script: 'dirname $(find dist -name enkiConfig.cmake | head -1)', returnStdout: true).trim()
+								env.macos_dashel_DIR = sh ( script: 'dirname $(find dist -name dashelConfig.cmake | head -1)', returnStdout: true).trim()
+								env.macos_enki_DIR = sh ( script: 'dirname $(find dist -name enkiConfig.cmake | head -1)', returnStdout: true).trim()
 							}
 							echo "Found dashel_DIR=${env.dashel_DIR} enki_DIR=${env.enki_DIR}"
 							unstash 'source'
 							CMake([sourceDir: '$workDir/aseba', label: 'macos',
-								   envs: [ "dashel_DIR=${env.dashel_DIR}", "enki_DIR=${env.enki_DIR}" ] ])
-							stash includes: 'dist/**', name: 'dist-macos'
+								   envs: [ "dashel_DIR=${env.macos_dashel_DIR}", "enki_DIR=${env.macos_enki_DIR}" ] ])
+							stash includes: 'dist/**', name: 'dist-aseba-macos'
 						}
 					},
 					"windows" : {
 						node('windows') {
-							unstash 'dist-windows'
+							unstash 'dist-dashel-windows'
+							unstash 'dist-enki-windows'
 							script {
-								env.dashel_DIR = sh ( script: 'dirname $(find dist -name dashelConfig.cmake | head -1)', returnStdout: true).trim()
-								env.enki_DIR = sh ( script: 'dirname $(find dist -name enkiConfig.cmake | head -1)', returnStdout: true).trim()
+								env.windows_dashel_DIR = sh ( script: 'dirname $(find dist -name dashelConfig.cmake | head -1)', returnStdout: true).trim()
+								env.windows_enki_DIR = sh ( script: 'dirname $(find dist -name enkiConfig.cmake | head -1)', returnStdout: true).trim()
 							}
 							unstash 'source'
 							CMake([sourceDir: '$workDir/aseba', label: 'windows',
-								   envs: [ "dashel_DIR=${env.dashel_DIR}", "enki_DIR=${env.enki_DIR}" ] ])
-							stash includes: 'dist/**', name: 'dist-windows'
+								   envs: [ "dashel_DIR=${env.windows_dashel_DIR}", "enki_DIR=${env.windows_enki_DIR}" ] ])
+							stash includes: 'dist/**', name: 'dist-aseba-windows'
 						}
 					}
 				)
@@ -154,7 +154,7 @@ pipeline {
 			// releases or for end-to-end testing.
 			steps {
 				node('debian') {
-					unstash 'dist-debian'
+					unstash 'dist-aseba-debian'
 					dir('build/aseba') {
 						sh "LANG=C ctest -E 'e2e.*|simulate.*|.*http.*|valgrind.*'"
 					}
@@ -168,7 +168,7 @@ pipeline {
 			}
 			steps {
 				node('debian') {
-					unstash 'dist-debian'
+					unstash 'dist-aseba-debian'
 					dir('build/aseba') {
 						sh "LANG=C ctest -R 'e2e.*|simulate.*|.*http.*|valgrind.*'"
 					}
@@ -185,13 +185,15 @@ pipeline {
 				parallel (
 					"debian" : {
 						node('debian') {
-							unstash 'dist-debian'
+							unstash 'dist-dashel-debian'
+							unstash 'dist-enki-debian'
 							unstash 'source'
 							dir('dashel') {
 								sh 'which debuild && debuild -i -us -uc -b'
 							}
-							sh 'mv aseba*.deb aseba*.changes aseba*.build dist/debian/'
-							stash includes: 'dist/**', name: 'dist-debian'
+							archiveArtifacts artifacts: 'aseba*.deb', fingerprint: true, onlyIfSuccessful: true
+							// sh 'mv aseba*.deb aseba*.changes aseba*.build dist/debian/'
+							// stash includes: 'dist/**', name: 'package-debian'
 						}
 					}
 				)
@@ -206,7 +208,7 @@ pipeline {
 						def label = x
 						p[label] = {
 							node(label) {
-								unstash 'dist-' + label
+								unstash 'dist-aseba-' + label
 								archiveArtifacts artifacts: 'dist/**', fingerprint: true, onlyIfSuccessful: true
 							}
 						}
