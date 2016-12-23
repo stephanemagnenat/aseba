@@ -110,8 +110,8 @@ pipeline {
 							unstash 'dist-dashel-debian'
 							unstash 'dist-enki-debian'
 							script {
-								env.debian_dashel_DIR = sh ( script: 'dirname $(find dist -name dashelConfig.cmake | head -1)', returnStdout: true).trim()
-								env.debian_enki_DIR = sh ( script: 'dirname $(find dist -name enkiConfig.cmake | head -1)', returnStdout: true).trim()
+								env.debian_dashel_DIR = sh ( script: 'dirname $(find dist/debian -name dashelConfig.cmake | head -1)', returnStdout: true).trim()
+								env.debian_enki_DIR = sh ( script: 'dirname $(find dist/debian -name enkiConfig.cmake | head -1)', returnStdout: true).trim()
 							}
 							unstash 'source'
 							CMake([sourceDir: '$workDir/aseba', label: 'debian',
@@ -124,8 +124,8 @@ pipeline {
 							unstash 'dist-dashel-macos'
 							unstash 'dist-enki-macos'
 							script {
-								env.macos_dashel_DIR = sh ( script: 'dirname $(find dist -name dashelConfig.cmake | head -1)', returnStdout: true).trim()
-								env.macos_enki_DIR = sh ( script: 'dirname $(find dist -name enkiConfig.cmake | head -1)', returnStdout: true).trim()
+								env.macos_dashel_DIR = sh ( script: 'dirname $(find dist/macos -name dashelConfig.cmake | head -1)', returnStdout: true).trim()
+								env.macos_enki_DIR = sh ( script: 'dirname $(find dist/macos -name enkiConfig.cmake | head -1)', returnStdout: true).trim()
 							}
 							echo "Found dashel_DIR=${env.dashel_DIR} enki_DIR=${env.enki_DIR}"
 							unstash 'source'
@@ -139,8 +139,8 @@ pipeline {
 							unstash 'dist-dashel-windows'
 							unstash 'dist-enki-windows'
 							script {
-								env.windows_dashel_DIR = sh ( script: 'dirname $(find dist -name dashelConfig.cmake | head -1)', returnStdout: true).trim()
-								env.windows_enki_DIR = sh ( script: 'dirname $(find dist -name enkiConfig.cmake | head -1)', returnStdout: true).trim()
+								env.windows_dashel_DIR = sh ( script: 'dirname $(find dist/windows -name dashelConfig.cmake | head -1)', returnStdout: true).trim()
+								env.windows_enki_DIR = sh ( script: 'dirname $(find dist/windows -name enkiConfig.cmake | head -1)', returnStdout: true).trim()
 							}
 							unstash 'source'
 							CMake([sourceDir: '$workDir/aseba', label: 'windows',
