@@ -125,6 +125,7 @@ pipeline {
 								env.dashel_DIR = sh ( script: 'dirname $(find dist -name dashelConfig.cmake | head -1)', returnStdout: true).trim()
 								env.enki_DIR = sh ( script: 'dirname $(find dist -name enkiConfig.cmake | head -1)', returnStdout: true).trim()
 							}
+							echo "Found dashel_DIR=${env.dashel_DIR} enki_DIR=${env.enki_DIR}"
 							unstash 'source'
 							CMake([sourceDir: '$workDir/aseba', label: 'macos',
 								   envs: [ "dashel_DIR=${env.dashel_DIR}", "enki_DIR=${env.enki_DIR}" ] ])
