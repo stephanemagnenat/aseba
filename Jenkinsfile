@@ -44,6 +44,7 @@ pipeline {
 				parallel (
 					"debian" : {
 						node('debian') {
+							sh 'rm -rf dist/*'
 							unstash 'source'
 							CMake([sourceDir: '$workDir/externals/dashel', label: 'debian',
 								   buildDir: '$workDir/build/dashel/debian'])
@@ -52,6 +53,7 @@ pipeline {
 					},
 					"macos" : {
 						node('macos') {
+							sh 'rm -rf dist/*'
 							unstash 'source'
 							CMake([sourceDir: '$workDir/externals/dashel', label: 'macos',
 								   buildDir: '$workDir/build/dashel/macos'])
@@ -60,6 +62,7 @@ pipeline {
 					},
 					"windows" : {
 						node('windows') {
+							sh 'rm -rf dist/*'
 							unstash 'source'
 							CMake([sourceDir: '$workDir/externals/dashel', label: 'windows',
 								   buildDir: '$workDir/build/dashel/windows'])
