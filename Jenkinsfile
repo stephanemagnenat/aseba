@@ -21,7 +21,6 @@ pipeline {
 			steps {
 				echo "branch_dashel=${env.branch_dashel}"
 				echo "branch_enki=${env.branch_enki}"
-				echo "do_packaging=${env.do_packaging}"
 
 				// Dashel and Enki will be checked ou into externals/ directory.
 				// Everything will be built in build/ directory.
