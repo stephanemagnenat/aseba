@@ -23,9 +23,7 @@ pipeline {
 				echo "branch_enki=${env.branch_enki}"
 
 				// Dashel and Enki will be checked ou into externals/ directory.
-				// Everything will be built in build/ directory.
-				// Everything will be installed in dist/ directory.
-				sh 'mkdir -p externals build dist'
+				sh 'mkdir -p externals'
 				dir('aseba') {
 					checkout scm
 					sh 'git submodule update --init'
@@ -36,15 +34,17 @@ pipeline {
 				dir('externals/enki') {
 					git branch: "${env.branch_enki}", url: 'https://github.com/enki-community/enki.git'
 				}
-				stash excludes: '.git', name: 'source'
+				stash excludes: '.git', includes: 'aseba/**,externals/**', name: 'source'
 			}
 		}
+		// Everything will be built in build/ directory.
+		// Everything will be installed in dist/ directory.
 		stage('Dashel') {
 			steps {
 				parallel (
 					"debian" : {
 						node('debian') {
-							sh 'rm -rf dist/*'
+							// sh 'rm -rf build/* dist/*'
 							unstash 'source'
 							CMake([sourceDir: '$workDir/externals/dashel', label: 'debian', preloadScript: 'set -x',
 								   buildDir: '$workDir/build/dashel/debian'])
@@ -53,7 +53,7 @@ pipeline {
 					},
 					"macos" : {
 						node('macos') {
-							sh 'rm -rf dist/*'
+							// sh 'rm -rf build/* dist/*'
 							unstash 'source'
 							CMake([sourceDir: '$workDir/externals/dashel', label: 'macos', preloadScript: 'set -x',
 								   buildDir: '$workDir/build/dashel/macos'])
@@ -62,7 +62,7 @@ pipeline {
 					},
 					"windows" : {
 						node('windows') {
-							sh 'rm -rf dist/*'
+							// sh 'rm -rf build/* dist/*'
 							unstash 'source'
 							CMake([sourceDir: '$workDir/externals/dashel', label: 'windows', preloadScript: 'set -x',
 								   buildDir: '$workDir/build/dashel/windows'])
