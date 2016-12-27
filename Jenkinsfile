@@ -173,22 +173,21 @@ python -c "import sys; print 'lib/python'+str(sys.version_info[0])+'.'+str(sys.v
 		stage('Extended Test') {
 			// Extended tests are only run for master branch.
 			when {
-				env.BRANCH == 'master'
+				true // env.BRANCH == 'master'
 			}
 			steps {
 				node('debian') {
 					unstash 'dist-aseba-debian'
 					dir('build/aseba') {
-						sh "LANG=C ctest -R 'e2e.*|simulate.*|.*http.*|valgrind.*'"
+						sh "LANG=en_US.UTF-8 ctest -R 'e2e.*|simulate.*|.*http.*|valgrind.*'"
 					}
 				}
 			}
 		}
 		stage('Package') {
-			// Only do packaging if boolean parameter says so.
 			// For now, this pipeline only knows about making .deb on Debian.
 			when {
-				env.BRANCH == 'master'
+				true // env.BRANCH == 'master'
 			}
 			steps {
 				parallel (
