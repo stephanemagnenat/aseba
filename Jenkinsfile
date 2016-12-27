@@ -185,7 +185,7 @@ python -c "import sys; print 'lib/python'+str(sys.version_info[0])+'.'+str(sys.v
 			}
 		}
 		stage('Package') {
-			// For now, this pipeline only knows about making .deb on Debian.
+			// Packages are only built for master branch
 			when {
 				true // env.BRANCH == 'master'
 			}
@@ -193,10 +193,12 @@ python -c "import sys; print 'lib/python'+str(sys.version_info[0])+'.'+str(sys.v
 				parallel (
 					"debian" : {
 						node('debian') {
+							// NOT PORTABLE, relies on libdashel and libenki being installed on the node.
+							// We should rebuild all packages in a clean environment using pbuilder.
 							unstash 'dist-dashel-debian'
 							unstash 'dist-enki-debian'
 							unstash 'source'
-							dir('dashel') {
+							dir('aseba') {
 								sh 'which debuild && debuild -i -us -uc -b'
 							}
 							archiveArtifacts artifacts: 'aseba*.deb', fingerprint: true, onlyIfSuccessful: true
