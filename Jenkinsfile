@@ -79,7 +79,7 @@ pipeline {
 						node('debian') {
 							unstash 'source'
 							CMake([sourceDir: '$workDir/externals/enki', label: 'debian', preloadScript: 'set -x',
-								   getCmakeArgs: '-DPYTHON_CUSTOM_TARGET:PATH="$installDir/"$(python -c "import sys; print \"lib/python\"+str(sys.version_info[0])+\".\"+str(sys.version_info[1])+"/dist-packages\"")',
+								   getCmakeArgs: '-DPYTHON_CUSTOM_TARGET:PATH="$installDir/"$(python -c "import sys; print \\"lib/python\\"+str(sys.version_info[0])+\\".\\"+str(sys.version_info[1])+\\"/dist-packages\\"")',
 								   buildDir: '$workDir/build/enki/debian'])
 							stash includes: 'dist/**', name: 'dist-enki-debian'
 						}
