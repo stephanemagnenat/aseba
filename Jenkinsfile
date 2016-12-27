@@ -78,8 +78,9 @@ pipeline {
 					"debian" : {
 						node('debian') {
 							unstash 'source'
+							env.debian_python = sh ( script: 'python -c "import sys; print \"lib/python\"+str(sys.version_info[0])+\".\"+str(sys.version_info[1])+\"/dist-packages\""', returnStdout: true).trim()
 							CMake([sourceDir: '$workDir/externals/enki', label: 'debian', preloadScript: 'set -x',
-								   getCmakeArgs: '-DPYTHON_CUSTOM_TARGET:PATH="$installDir/"$(python -c "import sys; print \\"lib/python\\"+str(sys.version_info[0])+\\".\\"+str(sys.version_info[1])+\\"/dist-packages\\"")',
+								   getCmakeArgs: "-DPYTHON_CUSTOM_TARGET:PATH=${env.debian_python},
 								   buildDir: '$workDir/build/enki/debian'])
 							stash includes: 'dist/**', name: 'dist-enki-debian'
 						}
