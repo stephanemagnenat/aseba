@@ -164,8 +164,8 @@ python -c "import sys; print 'lib/python'+str(sys.version_info[0])+'.'+str(sys.v
 			steps {
 				node('debian') {
 					unstash 'dist-aseba-debian'
-					dir('build/aseba') {
-						sh "LANG=C ctest -E 'e2e.*|simulate.*|.*http.*|valgrind.*'"
+					dir('build/debian') {
+						sh "LANG=en_US.UTF-8 ctest -E 'e2e.*|simulate.*|.*http.*|valgrind.*'"
 					}
 				}
 			}
