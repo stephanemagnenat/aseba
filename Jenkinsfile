@@ -195,8 +195,8 @@ pipeline {
 					"debian" : {
 						// node('') {
 							unstash 'source'
-							sh '(cd externals/dashel && debuild -i -us -uc -b && sudo dpkg -i ../libdashel*.deb)'
-							sh '(cd externals/enki && debuild -i -us -uc -b && sudo dpkg -i ../libenki*.deb)'
+							sh '(cd externals/dashel && debuild -i -us -uc -b && dpkg -i ../libdashel*.deb)'
+							sh '(cd externals/enki && debuild -i -us -uc -b && dpkg -i ../libenki*.deb)'
 							sh '(cd aseba && debuild -i -us -uc -b)'
 							archiveArtifacts artifacts: 'aseba*.deb', fingerprint: true, onlyIfSuccessful: true
 						// }
