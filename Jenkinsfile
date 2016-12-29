@@ -189,7 +189,7 @@ pipeline {
 			when {
 				true // env.BRANCH == 'master'
 			}
-			agent docker: 'aseba/buildfarm-ci-ubuntu', label: 'docker'
+			agent docker: 'aseba/buildfarm', label: 'docker'
 			steps {
 				parallel (
 					"debian" : {
