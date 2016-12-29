@@ -192,7 +192,8 @@ python -c "import sys; print 'lib/python'+str(sys.version_info[0])+'.'+str(sys.v
 			steps {
 				parallel (
 					"debian" : {
-						node('debian') {
+						node('docker') {
+							agent docker: 'aseba/buildfarm-ci-ubuntu', label: 'docker'
 							// NOT PORTABLE, relies on libdashel and libenki being installed on the node.
 							// We should rebuild all packages in a clean environment using pbuilder.
 							unstash 'dist-dashel-debian'
