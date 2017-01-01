@@ -195,7 +195,7 @@ python -c "import sys; print 'lib/python'+str(sys.version_info[0])+'.'+str(sys.v
 					"debian" : {
 						node('docker') {
 							script {
-								dockerNode(image: 'aseba/buildfarm', sideContainers: ['']) {
+								docker.image('aseba/buildfarm').inside {
 									unstash 'source'
 									sh '(cd externals/dashel && debuild -i -us -uc -b && sudo dpkg -i ../libdashel*.deb)'
 									sh '(cd externals/enki && debuild -i -us -uc -b && sudo dpkg -i ../libenki*.deb)'
