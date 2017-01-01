@@ -212,7 +212,7 @@ python -c "import sys; print 'lib/python'+str(sys.version_info[0])+'.'+str(sys.v
 							// Spoof the packager
 							// This would probably be much cleaner with cpack
 							sh '''
-								ln -s . source
+								[ -d source ] || ln -s . source
 								mkdir -p build/dashel && ln dist/macos/lib/libdashel.1.2.0.dylib build/dashel
 								mkdir -p build/aseba/clients/cmd && ln dist/macos/bin/asebacmd build/aseba/clients/cmd/
 								mkdir -p build/aseba/clients/dump && ln dist/macos/bin/asebadump build/aseba/clients/dump/
