@@ -197,9 +197,9 @@ python -c "import sys; print 'lib/python'+str(sys.version_info[0])+'.'+str(sys.v
 							script {
 								docker.image('aseba/buildfarm').inside {
 									unstash 'source'
-									sh '(cd externals/dashel && debuild -i -us -uc -b && sudo dpkg -i ../libdashel*.deb)'
-									sh '(cd externals/enki && debuild -i -us -uc -b && sudo dpkg -i ../libenki*.deb)'
-									sh '(cd aseba && debuild -i -us -uc -b)'
+									sh '(cd externals/dashel && debuild -i -us -uc -b && sudo dpkg -i ../libdashel*.deb || echo fail dashel)'
+									sh '(cd externals/enki && debuild -i -us -uc -b && sudo dpkg -i ../libenki*.deb || echo fail enki)'
+									sh '(cd aseba && debuild -i -us -uc -b || echo fail aseba)'
 								}
 							}
 							archiveArtifacts artifacts: 'aseba*.deb', fingerprint: true, onlyIfSuccessful: true
