@@ -189,15 +189,21 @@ python -c "import sys; print 'lib/python'+str(sys.version_info[0])+'.'+str(sys.v
 			when {
 				true // env.BRANCH == 'master'
 			}
-			agent docker: 'aseba/buildfarm', label: 'docker'
+			// agent docker: 'aseba/buildfarm', label: 'docker'
 			steps {
 				parallel (
 					"debian" : {
-						unstash 'source'
-						sh '(cd externals/dashel && debuild -i -us -uc -b && sudo dpkg -i ../libdashel*.deb)'
-						sh '(cd externals/enki && debuild -i -us -uc -b && sudo dpkg -i ../libenki*.deb)'
-						sh '(cd aseba && debuild -i -us -uc -b)'
-						archiveArtifacts artifacts: 'aseba*.deb', fingerprint: true, onlyIfSuccessful: true
+						node('docker') {
+							script {
+								dockerNode(image: 'aseba/buildfarm', sideContainers: ['']) {
+									unstash 'source'
+									sh '(cd externals/dashel && debuild -i -us -uc -b && sudo dpkg -i ../libdashel*.deb)'
+									sh '(cd externals/enki && debuild -i -us -uc -b && sudo dpkg -i ../libenki*.deb)'
+									sh '(cd aseba && debuild -i -us -uc -b)'
+									archiveArtifacts artifacts: 'aseba*.deb', fingerprint: true, onlyIfSuccessful: true
+								}
+							}
+						}
 					},
 					"macos" : {
 						node('macos') {
