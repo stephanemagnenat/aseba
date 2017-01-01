@@ -192,7 +192,7 @@ python -c "import sys; print 'lib/python'+str(sys.version_info[0])+'.'+str(sys.v
 			// agent docker: 'aseba/buildfarm', label: 'docker'
 			steps {
 				parallel (
-					"debian" : {
+					"debian-pack" : {
 						node('docker') {
 							script {
 								docker.image('aseba/buildfarm').inside {
@@ -200,12 +200,12 @@ python -c "import sys; print 'lib/python'+str(sys.version_info[0])+'.'+str(sys.v
 									sh '(cd externals/dashel && debuild -i -us -uc -b && sudo dpkg -i ../libdashel*.deb)'
 									sh '(cd externals/enki && debuild -i -us -uc -b && sudo dpkg -i ../libenki*.deb)'
 									sh '(cd aseba && debuild -i -us -uc -b)'
-									archiveArtifacts artifacts: 'aseba*.deb', fingerprint: true, onlyIfSuccessful: true
 								}
 							}
+							archiveArtifacts artifacts: 'aseba*.deb', fingerprint: true, onlyIfSuccessful: true
 						}
 					},
-					"macos" : {
+					"macos-pack" : {
 						node('macos') {
 							unstash 'dist-aseba-macos'
 							git branch: 'inherit-env', url: 'https://github.com/davidjsherman/aseba-osx.git'
@@ -248,7 +248,7 @@ python -c "import sys; print 'lib/python'+str(sys.version_info[0])+'.'+str(sys.v
 					def p = [:]
 					for (x in ['debian','macos','windows']) {
 						def label = x
-						p[label] = {
+						p[label+'-archive'] = {
 							node(label) {
 								unstash 'dist-aseba-' + label
 								archiveArtifacts artifacts: 'dist/**', fingerprint: true, onlyIfSuccessful: true
