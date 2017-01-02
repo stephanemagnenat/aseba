@@ -124,22 +124,22 @@ python -c "import sys; print 'lib/python'+str(sys.version_info[0])+'.'+str(sys.v
 								   envs: [ "dashel_DIR=${env.debian_dashel_DIR}", "enki_DIR=${env.debian_enki_DIR}" ] ])
 							stash includes: 'dist/**', name: 'dist-aseba-debian'
 						}
-					// },
-					// "macos" : {
-					// 	node('macos') {
-					// 		unstash 'dist-dashel-macos'
-					// 		unstash 'dist-enki-macos'
-					// 		script {
-					// 			env.macos_dashel_DIR = sh ( script: 'dirname $(find $PWD/dist/macos -name dashelConfig.cmake | head -1)', returnStdout: true).trim()
-					// 			env.macos_enki_DIR = sh ( script: 'dirname $(find $PWD/dist/macos -name enkiConfig.cmake | head -1)', returnStdout: true).trim()
-					// 		}
-					// 		echo "Found dashel_DIR=${env.dashel_DIR} enki_DIR=${env.enki_DIR}"
-					// 		unstash 'source'
-					// 		CMake([sourceDir: '$workDir/aseba', label: 'macos', preloadScript: 'set -x',
-					// 			   envs: [ "dashel_DIR=${env.macos_dashel_DIR}", "enki_DIR=${env.macos_enki_DIR}" ] ])
-					// 		stash includes: 'dist/**', name: 'dist-aseba-macos'
-					// 		stash includes: 'build/**', name: 'build-aseba-macos'
-					// 	}
+					},
+					"macos" : {
+						node('macos') {
+							unstash 'dist-dashel-macos'
+							unstash 'dist-enki-macos'
+							script {
+								env.macos_dashel_DIR = sh ( script: 'dirname $(find $PWD/dist/macos -name dashelConfig.cmake | head -1)', returnStdout: true).trim()
+								env.macos_enki_DIR = sh ( script: 'dirname $(find $PWD/dist/macos -name enkiConfig.cmake | head -1)', returnStdout: true).trim()
+							}
+							echo "Found dashel_DIR=${env.dashel_DIR} enki_DIR=${env.enki_DIR}"
+							unstash 'source'
+							CMake([sourceDir: '$workDir/aseba', label: 'macos', preloadScript: 'set -x',
+								   envs: [ "dashel_DIR=${env.macos_dashel_DIR}", "enki_DIR=${env.macos_enki_DIR}" ] ])
+							stash includes: 'dist/**', name: 'dist-aseba-macos'
+							stash includes: 'build/**', name: 'build-aseba-macos'
+						}
 					// },
 					// "windows" : {
 					// 	node('windows') {
