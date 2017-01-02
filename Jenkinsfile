@@ -222,7 +222,7 @@ python -c "import sys; print 'lib/python'+str(sys.version_info[0])+'.'+str(sys.v
 								export your_qwt_path=$(otool -L dist/macos/bin/asebastudio | grep qwt.framework | perl -pe "s{\\s*(/.*)lib/QtCore.*}{\\$1}")
 								mkdir -p build/packager && cd build/packager && bash -x ../../packager/packager_script || echo fail macos
 							'''
-							archiveArtifacts artifacts: 'Aseba*.dmg', fingerprint: true, onlyIfSuccessful: true
+							//archiveArtifacts artifacts: 'Aseba*.dmg', fingerprint: true, onlyIfSuccessful: true
 							script {
 								currentBuild.result = "SUCCESS"
 							}
