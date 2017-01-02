@@ -195,7 +195,7 @@ python -c "import sys; print 'lib/python'+str(sys.version_info[0])+'.'+str(sys.v
 				parallel (
 					"debian-pack" : {
 						node('docker') {
-				// 			script {
+							// script {
 				// 				docker.image('aseba/buildfarm').inside {
 				// 					unstash 'source'
 				// 					sh '''
@@ -207,7 +207,9 @@ python -c "import sys; print 'lib/python'+str(sys.version_info[0])+'.'+str(sys.v
 				// 				}
 				// 			}
 				// 			archiveArtifacts artifacts: 'aseba*.deb', fingerprint: true //, onlyIfSuccessful: true
-							currentBuild.result = "SUCCESS"
+							script {
+								currentBuild.result = "SUCCESS"
+							}
 						}
 					},
 					"macos-pack" : {
@@ -221,7 +223,9 @@ python -c "import sys; print 'lib/python'+str(sys.version_info[0])+'.'+str(sys.v
 					// 			mkdir -p build/packager && cd build/packager && bash -x ../../packager/packager_script || echo fail macos
 					// 		'''
 					// 		archiveArtifacts artifacts: 'Aseba*.dmg', fingerprint: true, onlyIfSuccessful: true
-							currentBuild.result = "SUCCESS"
+							script {
+								currentBuild.result = "SUCCESS"
+							}
 						}
 					}
 				)
