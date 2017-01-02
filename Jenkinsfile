@@ -236,7 +236,8 @@ python -c "import sys; print 'lib/python'+str(sys.version_info[0])+'.'+str(sys.v
 				script {
 					// Can't use collectEntries yet [JENKINS-26481]
 					def p = [:]
-					for (x in ['debian','macos','windows']) {
+					// for (x in ['debian','macos','windows']) {
+					for (x in ['debian']) {
 						def label = x
 						p[label+'-archive'] = {
 							node(label) {
