@@ -138,6 +138,7 @@ python -c "import sys; print 'lib/python'+str(sys.version_info[0])+'.'+str(sys.v
 							CMake([sourceDir: '$workDir/aseba', label: 'macos', preloadScript: 'set -x',
 								   envs: [ "dashel_DIR=${env.macos_dashel_DIR}", "enki_DIR=${env.macos_enki_DIR}" ] ])
 							stash includes: 'dist/**', name: 'dist-aseba-macos'
+							stash includes: 'build/**', name: 'build-aseba-macos'
 						}
 					},
 					"windows" : {
@@ -197,9 +198,12 @@ python -c "import sys; print 'lib/python'+str(sys.version_info[0])+'.'+str(sys.v
 							script {
 								docker.image('aseba/buildfarm').inside {
 									unstash 'source'
-									sh '(cd externals/dashel && debuild -i -us -uc -b && sudo dpkg -i ../libdashel*.deb || echo fail dashel)'
-									sh '(cd externals/enki && debuild -i -us -uc -b && sudo dpkg -i ../libenki*.deb || echo fail enki)'
-									sh '(cd aseba && debuild -i -us -uc -b || echo fail aseba)'
+									sh '''
+										(cd externals/dashel && debuild -i -us -uc -b && sudo dpkg -i ../libdashel*.deb)
+										(cd externals/enki && debuild -i -us -uc -b && sudo dpkg -i ../libenki*.deb)
+										(cd aseba && debuild -i -us -uc -b)
+										exit 0
+									'''
 								}
 							}
 							archiveArtifacts artifacts: 'aseba*.deb', fingerprint: true, onlyIfSuccessful: true
@@ -207,30 +211,31 @@ python -c "import sys; print 'lib/python'+str(sys.version_info[0])+'.'+str(sys.v
 					},
 					"macos-pack" : {
 						node('macos') {
-							unstash 'dist-aseba-macos'
+							unstash 'build-aseba-macos'
 							git branch: 'inherit-env', url: 'https://github.com/davidjsherman/aseba-osx.git'
 							// Spoof the packager
 							// This would probably be much cleaner with cpack
+							// sh '''
+							// 	[ -d source ] || ln -s . source
+							// 	mkdir -p build/dashel && ln dist/macos/lib/libdashel.1.2.0.dylib build/dashel
+							// 	mkdir -p build/aseba/clients/cmd && ln dist/macos/bin/asebacmd build/aseba/clients/cmd/
+							// 	mkdir -p build/aseba/clients/dump && ln dist/macos/bin/asebadump build/aseba/clients/dump/
+							// 	mkdir -p build/aseba/clients/replay && ln dist/macos/bin/asebaplay build/aseba/clients/replay/
+							// 	mkdir -p build/aseba/clients/replay && ln dist/macos/bin/asebarec build/aseba/clients/replay/
+							// 	mkdir -p build/aseba/clients/massloader && ln dist/macos/bin/asebamassloader build/aseba/clients/massloader/
+							// 	mkdir -p build/aseba/switches/switch && ln dist/macos/bin/asebaswitch build/aseba/switches/switch/
+							// 	mkdir -p build/aseba/switches/http && ln dist/macos/bin/asebahttp build/aseba/switches/http/
+							// 	mkdir -p build/aseba/switches/http2 && ln dist/macos/bin/asebahttp2 build/aseba/switches/http2/
+							// 	mkdir -p build/aseba/targets/dummy && ln dist/macos/bin/asebadummynode build/aseba/targets/dummy/
+							// 	mkdir -p build/aseba/clients/studio && ln dist/macos/bin/asebastudio build/aseba/clients/studio/
+							// 	mkdir -p build/aseba/clients/studio && ln dist/macos/bin/thymiovpl build/aseba/clients/studio/
+							// 	mkdir -p build/aseba/targets/challenge && ln dist/macos/bin/asebachallenge build/aseba/targets/challenge/
+							// 	mkdir -p build/aseba/targets/playground && ln dist/macos/bin/asebaplayground build/aseba/targets/playground/
+							// 	mkdir -p build/aseba/clients/thymioupgrader && ln dist/macos/bin/thymioupgrader build/aseba/clients/thymioupgrader/
+							// 	mkdir -p build/aseba/clients/thymiownetconfig && ln dist/macos/bin/thymiownetconfig build/aseba/clients/thymiownetconfig/
+							// '''
 							sh '''
 								[ -d source ] || ln -s . source
-								mkdir -p build/dashel && ln dist/macos/lib/libdashel.1.2.0.dylib build/dashel
-								mkdir -p build/aseba/clients/cmd && ln dist/macos/bin/asebacmd build/aseba/clients/cmd/
-								mkdir -p build/aseba/clients/dump && ln dist/macos/bin/asebadump build/aseba/clients/dump/
-								mkdir -p build/aseba/clients/replay && ln dist/macos/bin/asebaplay build/aseba/clients/replay/
-								mkdir -p build/aseba/clients/replay && ln dist/macos/bin/asebarec build/aseba/clients/replay/
-								mkdir -p build/aseba/clients/massloader && ln dist/macos/bin/asebamassloader build/aseba/clients/massloader/
-								mkdir -p build/aseba/switches/switch && ln dist/macos/bin/asebaswitch build/aseba/switches/switch/
-								mkdir -p build/aseba/switches/http && ln dist/macos/bin/asebahttp build/aseba/switches/http/
-								mkdir -p build/aseba/switches/http2 && ln dist/macos/bin/asebahttp2 build/aseba/switches/http2/
-								mkdir -p build/aseba/targets/dummy && ln dist/macos/bin/asebadummynode build/aseba/targets/dummy/
-								mkdir -p build/aseba/clients/studio && ln dist/macos/bin/asebastudio build/aseba/clients/studio/
-								mkdir -p build/aseba/clients/studio && ln dist/macos/bin/thymiovpl build/aseba/clients/studio/
-								mkdir -p build/aseba/targets/challenge && ln dist/macos/bin/asebachallenge build/aseba/targets/challenge/
-								mkdir -p build/aseba/targets/playground && ln dist/macos/bin/asebaplayground build/aseba/targets/playground/
-								mkdir -p build/aseba/clients/thymioupgrader && ln dist/macos/bin/thymioupgrader build/aseba/clients/thymioupgrader/
-								mkdir -p build/aseba/clients/thymiownetconfig && ln dist/macos/bin/thymiownetconfig build/aseba/clients/thymiownetconfig/
-							'''
-							sh '''
 								export your_qt_path=$(otool -L dist/macos/bin/asebastudio | grep QtCore | perl -pe "s{\\s*(/.*)lib/QtCore.*}{\\$1}")
 								export your_qwt_path=$(otool -L dist/macos/bin/asebastudio | grep qwt.framework | perl -pe "s{\\s*(/.*)lib/QtCore.*}{\\$1}")
 								mkdir -p build/packager && cd build/packager && bash -x ../../packager/packager_script || echo fail macos
