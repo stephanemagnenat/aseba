@@ -192,8 +192,8 @@ python -c "import sys; print 'lib/python'+str(sys.version_info[0])+'.'+str(sys.v
 			}
 			// agent docker: 'aseba/buildfarm', label: 'docker'
 			steps {
-				// parallel (
-				// 	"debian-pack" : {
+				parallel (
+					"debian-pack" : {
 				// 		node('docker') {
 				// 			script {
 				// 				docker.image('aseba/buildfarm').inside {
@@ -208,8 +208,9 @@ python -c "import sys; print 'lib/python'+str(sys.version_info[0])+'.'+str(sys.v
 				// 			}
 				// 			archiveArtifacts artifacts: 'aseba*.deb', fingerprint: true //, onlyIfSuccessful: true
 				// 		}
-				// 	}
-				// 	// "macos-pack" : {
+						currentBuild.result = "SUCCESS"
+					},
+					"macos-pack" : {
 				// 	// 	node('macos') {
 				// 	// 		unstash 'build-aseba-macos'
 				// 	// 		git branch: 'inherit-env', url: 'https://github.com/davidjsherman/aseba-osx.git'
@@ -221,11 +222,9 @@ python -c "import sys; print 'lib/python'+str(sys.version_info[0])+'.'+str(sys.v
 				// 	// 		'''
 				// 	// 		archiveArtifacts artifacts: 'Aseba*.dmg', fingerprint: true, onlyIfSuccessful: true
 				// 	// 	}
-				// 	// }
-				// )
-				script {
-					true
-				}
+						currentBuild.result = "SUCCESS"
+					}
+				)
 			}
 		}
 		stage('Archive') {
