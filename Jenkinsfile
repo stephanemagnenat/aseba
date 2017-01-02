@@ -153,7 +153,7 @@ python -c "import sys; print 'lib/python'+str(sys.version_info[0])+'.'+str(sys.v
 					// 		CMake([sourceDir: '$workDir/aseba', label: 'windows', preloadScript: 'set -x',
 					// 			   envs: [ "dashel_DIR=${env.windows_dashel_DIR}", "enki_DIR=${env.windows_enki_DIR}" ] ])
 					// 		stash includes: 'dist/**', name: 'dist-aseba-windows'
-						}
+						// }
 					}
 				)
 			}
