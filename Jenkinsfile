@@ -122,6 +122,7 @@ python -c "import sys; print 'lib/python'+str(sys.version_info[0])+'.'+str(sys.v
 							CMake([sourceDir: '$workDir/aseba', label: 'debian', preloadScript: 'set -x',
 								   envs: [ "dashel_DIR=${env.debian_dashel_DIR}", "enki_DIR=${env.debian_enki_DIR}" ] ])
 							stash includes: 'dist/**', name: 'dist-aseba-debian'
+							stash includes: 'build/**', name: 'build-aseba-debian'
 						}
 					},
 					"macos" : {
@@ -152,6 +153,7 @@ python -c "import sys; print 'lib/python'+str(sys.version_info[0])+'.'+str(sys.v
 							CMake([sourceDir: '$workDir/aseba', label: 'windows', preloadScript: 'set -x',
 								   envs: [ "dashel_DIR=${env.windows_dashel_DIR}", "enki_DIR=${env.windows_enki_DIR}" ] ])
 							stash includes: 'dist/**', name: 'dist-aseba-windows'
+							// stash includes: 'build/**', name: 'build-aseba-windows'
 						}
 					}
 				)
@@ -163,7 +165,7 @@ python -c "import sys; print 'lib/python'+str(sys.version_info[0])+'.'+str(sys.v
 			// releases or for end-to-end testing.
 			steps {
 				node('debian') {
-					unstash 'dist-aseba-debian'
+					unstash 'build-aseba-debian'
 					dir('build/debian') {
 						sh "LANG=en_US.UTF-8 ctest -E 'e2e.*|simulate.*|.*http.*|valgrind.*'"
 					}
@@ -177,7 +179,7 @@ python -c "import sys; print 'lib/python'+str(sys.version_info[0])+'.'+str(sys.v
 			}
 			steps {
 				node('debian') {
-					unstash 'dist-aseba-debian'
+					unstash 'build-aseba-debian'
 					dir('build/aseba') {
 						sh "LANG=en_US.UTF-8 ctest -R 'e2e.*|simulate.*|.*http.*|valgrind.*'"
 					}
@@ -187,7 +189,7 @@ python -c "import sys; print 'lib/python'+str(sys.version_info[0])+'.'+str(sys.v
 		stage('Package') {
 			// Packages are only built for master branch
 			when {
-				true // env.BRANCH == 'master'
+				env.BRANCH == 'master'
 			}
 			// agent docker: 'aseba/buildfarm', label: 'docker'
 			steps {
