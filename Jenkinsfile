@@ -195,17 +195,17 @@ python -c "import sys; print 'lib/python'+str(sys.version_info[0])+'.'+str(sys.v
 				parallel (
 					"debian-pack" : {
 						node('docker') {
-							// script {
-				// 				docker.image('aseba/buildfarm').inside {
-				// 					unstash 'source'
-				// 					sh '''
-				// 						(cd externals/dashel && debuild -i -us -uc -b && sudo dpkg -i ../libdashel*.deb)
-				// 						(cd externals/enki && debuild -i -us -uc -b && sudo dpkg -i ../libenki*.deb)
-				// 						(cd aseba && debuild -i -us -uc -b)
-				// 						exit 0
-				// 					'''
-				// 				}
-				// 			}
+							script {
+								docker.image('aseba/buildfarm').inside {
+									unstash 'source'
+									sh '''
+										(cd externals/dashel && debuild -i -us -uc -b && sudo dpkg -i ../libdashel*.deb)
+										(cd externals/enki && debuild -i -us -uc -b && sudo dpkg -i ../libenki*.deb)
+										(cd aseba && debuild -i -us -uc -b)
+										exit 0
+									'''
+								}
+							}
 				// 			archiveArtifacts artifacts: 'aseba*.deb', fingerprint: true //, onlyIfSuccessful: true
 							script {
 								currentBuild.result = "SUCCESS"
