@@ -180,7 +180,7 @@ python -c "import sys; print 'lib/python'+str(sys.version_info[0])+'.'+str(sys.v
 			steps {
 				node('debian') {
 					unstash 'build-aseba-debian'
-					dir('build/aseba') {
+					dir('build/debian') {
 						sh "LANG=en_US.UTF-8 ctest -R 'e2e.*|simulate.*|.*http.*|valgrind.*'"
 					}
 				}
