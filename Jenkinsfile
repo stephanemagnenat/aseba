@@ -206,7 +206,7 @@ python -c "import sys; print 'lib/python'+str(sys.version_info[0])+'.'+str(sys.v
 									'''
 								}
 							}
-				// 			archiveArtifacts artifacts: 'aseba*.deb', fingerprint: true //, onlyIfSuccessful: true
+							archiveArtifacts artifacts: 'aseba*.deb', fingerprint: true //, onlyIfSuccessful: true
 							script {
 								currentBuild.result = "SUCCESS"
 							}
