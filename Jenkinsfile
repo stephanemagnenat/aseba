@@ -22,7 +22,7 @@ pipeline {
 				echo "branch_dashel=${env.branch_dashel}"
 				echo "branch_enki=${env.branch_enki}"
 
-				// Dashel and Enki will be checked ou into externals/ directory.
+				// Dashel and Enki will be checked out into externals/ directory.
 				sh 'mkdir -p externals'
 				dir('aseba') {
 					checkout scm
@@ -44,7 +44,6 @@ pipeline {
 				parallel (
 					"debian" : {
 						node('debian') {
-							// sh 'rm -rf build/* dist/*'
 							unstash 'source'
 							CMake([sourceDir: '$workDir/externals/dashel', label: 'debian', preloadScript: 'set -x',
 								   buildDir: '$workDir/build/dashel/debian'])
@@ -140,20 +139,20 @@ python -c "import sys; print 'lib/python'+str(sys.version_info[0])+'.'+str(sys.v
 							stash includes: 'dist/**', name: 'dist-aseba-macos'
 							stash includes: 'build/**', name: 'build-aseba-macos'
 						}
-					// },
-					// "windows" : {
-					// 	node('windows') {
-					// 		unstash 'dist-dashel-windows'
-					// 		unstash 'dist-enki-windows'
-					// 		script {
-					// 			env.windows_dashel_DIR = sh ( script: 'dirname $(find $PWD/dist/windows -name dashelConfig.cmake | head -1)', returnStdout: true).trim()
-					// 			env.windows_enki_DIR = sh ( script: 'dirname $(find $PWD/dist/windows -name enkiConfig.cmake | head -1)', returnStdout: true).trim()
-					// 		}
-					// 		unstash 'source'
-					// 		CMake([sourceDir: '$workDir/aseba', label: 'windows', preloadScript: 'set -x',
-					// 			   envs: [ "dashel_DIR=${env.windows_dashel_DIR}", "enki_DIR=${env.windows_enki_DIR}" ] ])
-					// 		stash includes: 'dist/**', name: 'dist-aseba-windows'
-						// }
+					},
+					"windows" : {
+						node('windows') {
+							unstash 'dist-dashel-windows'
+							unstash 'dist-enki-windows'
+							script {
+								env.windows_dashel_DIR = sh ( script: 'dirname $(find $PWD/dist/windows -name dashelConfig.cmake | head -1)', returnStdout: true).trim()
+								env.windows_enki_DIR = sh ( script: 'dirname $(find $PWD/dist/windows -name enkiConfig.cmake | head -1)', returnStdout: true).trim()
+							}
+							unstash 'source'
+							CMake([sourceDir: '$workDir/aseba', label: 'windows', preloadScript: 'set -x',
+								   envs: [ "dashel_DIR=${env.windows_dashel_DIR}", "enki_DIR=${env.windows_enki_DIR}" ] ])
+							stash includes: 'dist/**', name: 'dist-aseba-windows'
+						}
 					}
 				)
 			}
@@ -206,10 +205,7 @@ python -c "import sys; print 'lib/python'+str(sys.version_info[0])+'.'+str(sys.v
 									'''
 								}
 							}
-							archiveArtifacts artifacts: 'aseba*.deb', fingerprint: true //, onlyIfSuccessful: true
-							// script {
-							// 	currentBuild.result = "SUCCESS"
-							// }
+							archiveArtifacts artifacts: 'aseba*.deb', fingerprint: true, onlyIfSuccessful: true
 						}
 					},
 					"macos-pack" : {
@@ -224,9 +220,6 @@ python -c "import sys; print 'lib/python'+str(sys.version_info[0])+'.'+str(sys.v
 									(cd build/packager && bash -x ../../packager/packager_script && mv Aseba*.dmg ../..)
 							'''
 							archiveArtifacts artifacts: 'Aseba*.dmg', fingerprint: true, onlyIfSuccessful: true
-							// script {
-							// 	currentBuild.result = "SUCCESS"
-							// }
 						}
 					}
 				)
@@ -235,15 +228,14 @@ python -c "import sys; print 'lib/python'+str(sys.version_info[0])+'.'+str(sys.v
 		stage('Archive') {
 			steps {
 				script {
-					// Can't use collectEntries yet [JENKINS-26481]
+					// Can't use collectEntries yet [JENKINS-26481], so use a loop accumulating into p
 					def p = [:]
-					// for (x in ['debian','macos','windows']) {
-					for (x in ['debian']) {
-						def label = x
+					for (x in ['debian','macos','windows']) {
+						def label = x		// capture loop variable (CPS bug)
 						p[label+'-archive'] = {
 							node(label) {
 								unstash 'dist-aseba-' + label
-								archiveArtifacts artifacts: 'dist/**', fingerprint: true //, onlyIfSuccessful: true
+								archiveArtifacts artifacts: 'dist/**', fingerprint: true, onlyIfSuccessful: true
 							}
 						}
 					}
