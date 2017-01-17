@@ -189,7 +189,7 @@ pipeline {
 		stage('Package') {
 			// Packages are only built for the master branch
 			when {
-				env.BRANCH == 'master'
+				true // env.BRANCH == 'master'
 			}
 			steps {
 				parallel (
