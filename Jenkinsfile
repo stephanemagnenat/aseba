@@ -222,7 +222,7 @@ pipeline {
 								mkdir -p build/packager &&
 									(cd build/packager && bash -x ../../packager/packager_script && mv Aseba*.dmg ../..)
 							'''
-							archiveArtifacts artifacts: 'Aseba*.dmg', fingerprint: true, onlyIfSuccessful: true
+							archiveArtifacts artifacts: '*.dmg', fingerprint: true, onlyIfSuccessful: true
 						}
 					}
 				)
