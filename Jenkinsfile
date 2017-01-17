@@ -212,7 +212,8 @@ pipeline {
 					"macos-pack" : {
 						node('macos') {
 							unstash 'build-aseba-macos'
-							git branch: 'inherit-env', url: 'https://github.com/davidjsherman/aseba-osx.git'
+							git branch: 'scratch-addon', url: 'https://github.com/davidjsherman/aseba-osx.git'
+							sh 'git submodule update --init'
 							sh '''
 								[ -d source ] || ln -s . source
 								export your_qt_path=$(otool -L dist/macos/bin/asebastudio | grep QtCore | perl -pe "s{\\s*(/.*)lib/QtCore.*}{\\$1}")
