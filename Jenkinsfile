@@ -26,7 +26,7 @@ pipeline {
 				sh 'mkdir -p externals'
 				dir('aseba') {
 					checkout scm
-					sh 'git submodule update --init'
+					sh 'git submodule update --init --recursive'
 				}
 				dir('externals/dashel') {
 					git branch: "${env.branch_dashel}", url: 'https://github.com/aseba-community/dashel.git'
@@ -56,6 +56,7 @@ pipeline {
 							unstash 'source'
 							CMake([sourceDir: '$workDir/externals/dashel', label: 'macos', preloadScript: 'set -x',
 								buildDir: '$workDir/build/dashel/macos'])
+							sh 'install build/dashel/macos/portlist dist/macos/bin'
 							stash includes: 'dist/**', name: 'dist-dashel-macos'
 						}
 					},
@@ -212,10 +213,12 @@ pipeline {
 					"macos-pack" : {
 						node('macos') {
 							unstash 'build-aseba-macos'
+							unstash 'dist-dashel-macos'
 							git branch: 'scratch-addon', url: 'https://github.com/davidjsherman/aseba-osx.git'
-							sh 'git submodule update --init'
+							sh 'git submodule update --init --recursive'
 							sh '''
 								[ -d source ] || ln -s . source
+								mkdir -p build/dashel && install dist/macos/bin/portlist build/dashel
 								export your_qt_path=$(otool -L dist/macos/bin/asebastudio | grep QtCore | perl -pe "s{\\s*(/.*)lib/QtCore.*}{\\$1}")
 								export your_qwt_path=$(otool -L dist/macos/bin/asebastudio | grep qwt.framework | perl -pe "s{\\s*(/.*)lib/QtCore.*}{\\$1}")
 								export your_certificate=none
